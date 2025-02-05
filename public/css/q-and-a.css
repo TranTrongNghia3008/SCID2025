@@ -1,0 +1,154 @@
+#map {
+    height: 90vh;
+    width: 100%;
+}
+
+/* Trang trí cho hộp chat */
+.chat-box {
+    height: 70vh;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-history-box {
+    height: 74vh;
+    display: flex;         
+    flex-direction: column;   
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.old-content, .new-content {
+    flex: 1;                 
+    overflow-y: auto;      
+    margin-bottom: 10px;       
+    padding-right: 10px;       
+}
+
+.edit-history-box div h6 {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Để phần cuối không bị dư khoảng trắng khi cuộn */
+.new-content {
+    margin-bottom: 0;
+}
+
+/* Tin nhắn của người dùng */
+.message {
+    margin-bottom: 15px;
+}
+.message.user {
+    text-align: right;
+}
+.message.user .content {
+    background-color: #007bff;
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+/* Tin nhắn của bot */
+.message.bot .content {
+    background-color: #e9ecef;
+    color: #333;
+    border-radius: 15px 15px 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+/* Nội dung tin nhắn */
+.content {
+    display: inline-block;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+/* Hộp nhập liệu */
+.input-box {
+    display: flex;
+    margin-top: 15px;
+}
+.input-box textarea {
+    flex-grow: 1;
+    resize: none;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Nút gửi tin nhắn */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Biểu tượng gửi */
+.bi-send-fill {
+    font-size: 1.5rem;
+}
+
+.map-container {
+    position: relative;
+}
+#mapControls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+}
+
+.chat-list {
+    position: absolute;  /* Đặt vị trí tuyệt đối */
+    top: 140px;           /* Đặt vị trí từ đỉnh xuống (khoảng cách từ nút navbar) */
+    left: 0;             /* Căn lề trái */  
+    z-index: 9999;       /* Đặt z-index cao để hiển thị trên các phần tử khác */
+    background-color: white;
+    max-height: 70vh;   /* Giới hạn chiều cao */
+    width: 300px;
+    overflow-y: auto;    /* Cuộn khi nội dung vượt quá */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Hiệu ứng đổ bóng */
+  }
+
+.chat-list-item {
+    text-decoration: none; /* Loại bỏ dấu gạch chân */
+    color: black; /* Đổi màu chữ thành màu đen */
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(215, 215, 215, 0.5); /* Semi-transparent black */
+    z-index: 1040; /* Just below the spinner */
+}
+
+#spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050; /* Above the overlay */
+}

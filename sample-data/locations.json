@@ -1,0 +1,82 @@
+[
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "administrative_area": "Hanoi",
+      "country": "Vietnam",
+      "continent": "Asia",
+      "lat": 21.0285,
+      "lon": 105.8542,
+      "links": [
+        "https://e.vnexpress.net/news/news/environment/climate-change-intensifies-la-nina-leading-to-stronger-storms-experts-4791721.html",
+        "https://e.vnexpress.net/news/world/world-warming-at-record-0-2c-per-decade-scientists-warn-4615206.html",
+        "https://e.vnexpress.net/news/news/vietnam-needs-35-bln-for-climate-change-adaptation-pm-4226847.html"
+      ],
+      "summaries": [
+        "Severe flooding and emergencies due to Typhoon Yagi.",
+        "Capital of Vietnam, facing significant climate risks due to global warming.",
+        "Vietnam needs $35 billion for climate adaptation and faces significant climate challenges."
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "administrative_area": "Northern Vietnam",
+      "country": "Vietnam",
+      "continent": "Asia",
+      "lat": 21.2001,
+      "lon": 105.8512,
+      "links": [
+        "https://e.vnexpress.net/news/news/environment/climate-change-intensifies-la-nina-leading-to-stronger-storms-experts-4791721.html"
+      ],
+      "summaries": [
+        "Directly affected by Typhoon Yagi and ongoing floods."
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "administrative_area": "Central Vietnam",
+      "country": "Vietnam",
+      "continent": "Asia",
+      "lat": 15.8801,
+      "lon": 108.337,
+      "links": [
+        "https://e.vnexpress.net/news/news/environment/climate-change-intensifies-la-nina-leading-to-stronger-storms-experts-4791721.html"
+      ],
+      "summaries": [
+        "Forecasted to suffer from heavy rains and storms."
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "administrative_area": "Southern Vietnam",
+      "country": "Vietnam",
+      "continent": "Asia",
+      "lat": 10.8265,
+      "lon": 106.6297,
+      "links": [
+        "https://e.vnexpress.net/news/news/environment/climate-change-intensifies-la-nina-leading-to-stronger-storms-experts-4791721.html"
+      ],
+      "summaries": [
+        "Mentioned with potential storm impact, less severe effects."
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "administrative_area": "Kolkata",
+      "country": "India",
+      "continent": "Asia",
+      "lat": 22.5726,
+      "lon": 88.3639,
+      "links": [
+        "https://e.vnexpress.net/news/news/environment/asia-s-extreme-april-heat-worsened-by-climate-change-scientists-say-4746219.html"
+      ],
+      "summaries": [
+        "Extreme temperatures leading to health risks; negative impact from climate change."
+      ],
+      "sentiment": "negative"
+    }
+  ]
+  

@@ -1,0 +1,98 @@
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+.web-name {
+    text-decoration: none; /* Xóa dấu gạch chân */
+    color: black;
+}
+
+.display-none {
+    display: none;
+}
+
+.dropdown-menu-user {
+    flex: 1 1 auto !important; 
+    position: fixed !important;
+    right: 0 !important;
+    top: 60px !important;
+    left: auto !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#drop-zone {
+    width: 75%;
+    height: 200px;
+    border: 2px dashed #0087f7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #cccccc;
+    font-family: Arial, sans-serif;
+    margin: 50px auto;
+    cursor: pointer;
+}
+
+#drop-zone.dragover {
+    border-color: #0000ff;
+    background-color: #f0f0f0;
+}
+
+#file-list {
+    width: 75%;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+#file-input::-webkit-file-upload-button {
+    visibility: hidden; /* Ẩn nút tải file của trình duyệt */
+}
+
+#file-input::before {
+    content: 'Browse file'; /* Tùy chỉnh văn bản hiển thị */
+    /* display: inline-block; */
+    /* background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3); */
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 3px 10px;
+    /* outline: none; */
+    /* white-space: nowrap; */
+    /* cursor: pointer; */
+    /* text-shadow: 1px 1px #fff; */
+    /* font-weight: 700;
+    font-size: 10pt; */
+}
+
+#file-input {
+    padding-left: 5px; /* Đảm bảo khoảng cách giữa văn bản và input */
+}
+
+.browse-file {
+    height: 100vh;
+}
+
+
+

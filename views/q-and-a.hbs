@@ -1,0 +1,76 @@
+<div id="overlay" class="d-none"></div>
+<div id="spinner" class="d-none">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Cột bên trái: Phần Hỏi Đáp -->
+        <div class="col-md-4 bg-light p-4 pt-1">
+            <nav class="navbar navbar-dark">
+                <div class="container-fluid">
+                    <button class="navbar-toggler text-bg-secondary" type="button" id="toggleChatList">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <h2 class="text-primary">Q & A</h2>
+                    <a href="#" class="new-chat" id="newChat" onclick="createNewChat('{{user._id}}')">
+                        <img src="/images/new-chat-icon.png" style="width: 3rem; height: 3rem;" alt="">
+                    </a>
+                </div>
+    
+            </nav>
+
+            <!-- Danh sách các cuộc trò chuyện trước đó (ẩn ban đầu) -->
+            <div class="chat-list shadow-sm rounded d-none" id="chatList">
+                <h5 class="p-2">Your conversation list</h5>
+                <div class="list-group">
+                    {{#each conversations}} 
+                    <div class="d-flex justify-content-between list-group-item list-group-item-action">
+                        <div>
+                            <!-- Title Display and Inline Editing -->
+                            <a href="#" class="chat-list-item" data-id="{{this._id}}" onclick="loadHistory('{{this._id}}')">
+                                <span class="title-display" id="titleDisplay-{{this._id}}">{{this.Title}}</span>
+                            </a>
+                            <!-- Input Field for Editing -->
+                            <input type="text" class="edit-input d-none" id="editInput-{{this._id}}" value="{{this.Title}}" 
+                                onkeydown="renameConversation(event, '{{this._id}}')">
+                        </div>
+
+                        <div>
+                            <a href="#" data-bs-toggle="tooltip" title="Rename" class="my-auto mx-2 rename-title" 
+                            data-id="{{this._id}}" onclick="showRenameInput('{{this._id}}')">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="#" data-bs-toggle="tooltip" title="Delete" class="mx-2 my-auto text-danger delete-history" 
+                            data-id="{{this._id}}">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+
+            <div class="chat-box shadow-sm rounded" id="chatBox">
+                <!-- Các tin nhắn sẽ hiển thị tại đây -->
+            </div>
+            <div class="input-box">
+                <textarea id="userInput" rows="2" class="form-control" placeholder="Enter your query..."></textarea>
+                <button class="btn btn-primary ms-2" id="sendMessage" onclick="sendMessage()"><i class="bi bi-send-fill"></i></button>
+            </div>
+        </div>
+        <!-- Cột bên phải: Bản đồ Google Maps -->
+        <div class="col-md-8 p-0 map-container">
+            <!-- Phần tiêu đề và nút điều khiển cho bản đồ -->
+            <div id="mapControls">
+                <h5 class="m-0">Interactive map</h5>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/q-and-a.js"></script>

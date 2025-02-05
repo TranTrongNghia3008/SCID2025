@@ -1,0 +1,21 @@
+[
+    {
+      "Name": "John Doe",
+      "Avatar": "https://example.com/avatars/johndoe.png",
+      "Email": "john.doe@example.com",
+      "Password": "hashed_password_123"
+    },
+    {
+      "Name": "Jane Smith",
+      "Avatar": "https://example.com/avatars/janesmith.png",
+      "Email": "jane.smith@example.com",
+      "Password": "hashed_password_456"
+    },
+    {
+      "Name": "Alice Johnson",
+      "Avatar": "https://example.com/avatars/alicejohnson.png",
+      "Email": "alice.johnson@example.com",
+      "Password": "hashed_password_789"
+    }
+  ]
+  

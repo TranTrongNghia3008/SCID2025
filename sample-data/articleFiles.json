@@ -1,0 +1,18 @@
+[
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "Link": "https://example.com/article1",
+      "PDFfile": "https://example.com/files/article1.pdf"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "Link": "https://example.com/article2",
+      "PDFfile": "https://example.com/files/article2.pdf"
+    },
+    {
+      "SessionID": "67024258e3bfadb74c37dca7",
+      "Link": "https://example.com/article3",
+      "PDFfile": "https://example.com/files/article3.pdf"
+    }
+  ]
+  
