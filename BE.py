@@ -2,6 +2,7 @@ from pythonBE.locationSummarization import *
 from pythonBE.searchInformations import *
 from pythonBE.verifyInformation import *
 from pythonBE.splitSentences import *
+from pythonBE.refineAnswer import *
 from pythonBE.crawlWHO import *
 from pythonBE.chatbot import *
 from pythonBE.config import *
@@ -170,7 +171,12 @@ def filter_the_output(fact_check_results):
     highlight_correct += "."
     link_correct += "."
 
-    return highlight_not_correct, link_not_correct, highlight_correct, link_correct
+    true_sentences = [item["details"].referenced_segment for item in fact_check_results if item["status"]]
+    false_sentences = [item["details"].referenced_segment for item in fact_check_results if not item["status"]]
+    revise_sentences = [item["details"].revised_sentence for item in fact_check_results if not item["status"]]
+    new_message = correct_answer(result, true_sentences, false_sentences, revise_sentences)
+
+    return highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message
 
 @app.post("/getResponse")
 async def get_response(request: ResponseRequest):
@@ -250,8 +256,8 @@ async def get_response(request: ResponseRequest):
     filtered_sentences = filter_sentences(splitted_sentences)
     fact_check_results = fact_check_pipeline(filtered_sentences, ref_files, response, topK, conversationsessionsID)
 
-    old_message = new_message = response
-    highlight_not_correct, link_not_correct, highlight_correct, link_correct = filter_the_output(fact_check_results)
+    old_message = response
+    highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message = filter_the_output(fact_check_results)
     db.conversationsessions.update_one(
     {"_id": ObjectId(conversationsessionsID)},
     {

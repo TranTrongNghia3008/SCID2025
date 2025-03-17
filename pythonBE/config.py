@@ -51,7 +51,7 @@ client = OpenAI(
     api_key = "YOUR_API_KEY",
 )
 
-clientMongoDB = MongoClient("mongodb+srv://admin:jsmFDvCxbGcoBBfr@cluster0.om2fx.mongodb.net/")
+clientMongoDB = MongoClient("YOUR_KEY")
 db = clientMongoDB["GeoSI"]
 fs = gridfs.GridFS(db)
 
