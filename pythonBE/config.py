@@ -33,8 +33,22 @@ from datetime import datetime
 # For location summarization
 from collections import defaultdict
 
+# For crawl Bing
+import random
+import time
+
+# For split sentences
+import spacy
+from transformers import pipeline
+from sentence_transformers import SentenceTransformer, util
+
+# For crawl WHO website and others
+import pdfplumber
+from contextlib import nullcontext
+from PyPDF2 import PdfReader
+
 client = OpenAI(
-    api_key = "",
+    api_key = "YOUR_API_KEY",
 )
 
 clientMongoDB = MongoClient("mongodb+srv://admin:jsmFDvCxbGcoBBfr@cluster0.om2fx.mongodb.net/")
@@ -42,6 +56,10 @@ db = clientMongoDB["GeoSI"]
 fs = gridfs.GridFS(db)
 
 STORAGE_PATH = "./storage/pdf_files"
+
+MINIMUM_K = 1
+
+ner_pipe = pipeline("token-classification", model="Clinical-AI-Apollo/Medical-NER", aggregation_strategy='simple')
 
 # Configure Chrome options
 chrome_options = webdriver.ChromeOptions()
@@ -117,3 +135,17 @@ class EventHandler(AssistantEventHandler):
     @override
     def on_message_done(self, message) -> None:
         self.result = message.content[0].text.value 
+
+class SentenceMapping(BaseModel):
+    sentence: str
+    referenced_segment: str  # The sentence is referenced
+    label: bool  # True = SUPPORTED, False = REFUTED
+    explanation: str
+    evidence_urls: List[str]
+    revised_sentence: str
+
+class FactCheck(BaseModel):
+    sentence: str
+    label: bool  # True = SUPPORTED, False = REFUTED
+    explanation: str
+    revised_sentence: str

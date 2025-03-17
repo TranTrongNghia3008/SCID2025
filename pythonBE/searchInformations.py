@@ -17,12 +17,13 @@ def analyze_prompt(text: str):
 def search_relevant_links(query: SearchQuery, topK: int, conversationsessionsID: str):
     driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
     
-    search_url = f'https://www.google.com/search?q=site:{query.site} {query.query}'
+    search_url = f'https://www.bing.com/search?q=site:{query.site} {query.query}'
     print(search_url)
     driver.get(search_url)
+    time.sleep(random.uniform(1, 3))
 
-    articles = driver.find_elements(By.CLASS_NAME, 'N54PNb')
-    links = []
+    articles = driver.find_elements(By.CSS_SELECTOR, "#b_results li.b_algo")
+    link_articles = []
 
     existing_links = set()
     existing_documents = db.articlefiles.find({"SessionID": conversationsessionsID})
@@ -30,21 +31,22 @@ def search_relevant_links(query: SearchQuery, topK: int, conversationsessionsID:
         existing_links.add(doc["Link"])
 
     for article in articles[:min(topK, len(articles))]:
-        title = article.find_element(By.CLASS_NAME, 'LC20lb').text
-        link = article.find_element(By.TAG_NAME, 'a').get_attribute('href')
+        title_element = article.find_element(By.TAG_NAME, "h2").find_element(By.TAG_NAME, "a")
+        title = title_element.text
+        link = title_element.get_attribute('href')
 
         if link not in existing_links:
-            # links.append({"title": title, "link": link})
+            # link_articles.append({"title": title, "link": link})
             link_article = LinkArticle(
                 title=title,
                 link=link,
             )
-            links.append(link_article)
-    print(links)
+            link_articles.append(link_article)
+    print(link_articles)
 
     driver.quit()
 
-    return links
+    return link_articles
 
 def convert_to_pdf(link_articles: List[LinkArticle], conversationsessionsID: str):
     file_paths = []

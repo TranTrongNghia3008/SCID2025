@@ -1,5 +1,8 @@
 from pythonBE.locationSummarization import *
 from pythonBE.searchInformations import *
+from pythonBE.verifyInformation import *
+from pythonBE.splitSentences import *
+from pythonBE.crawlWHO import *
 from pythonBE.chatbot import *
 from pythonBE.config import *
 
@@ -22,6 +25,31 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
+
+# @app.get("/test_split")
+# async def process_text(input_text: str):
+#     sentences = split_into_sentences(input_text)
+#     filtered_sentences = filter_sentences(sentences)
+
+#     return {
+#         "filtered_sentences": filtered_sentences
+#     }
+
+# @app.get("/test_search")
+# async def process_text(input_text: str, ):
+#     crawl_json = []
+#     who_urls = []
+    
+#     # who_urls = search_who(input_text)
+#     # if not who_urls:
+#     #     print(f"Can't find related articles for:\n{input_text}")
+
+#     # crawl_WHO(who_urls, crawl_json)
+#     crawl_others(input_text, who_urls, crawl_json)
+
+#     return {
+#         "response": crawl_json
+#     }
 
 @app.get("/start_session")
 async def start_session(user_id: str):
@@ -103,6 +131,47 @@ async def get_relevant_links(text: str, topK: int, conversationsessionsID: str):
     
     return {"query": query, "links": links, "file paths": file_paths, "locations": locations}
 
+def filter_the_output(fact_check_results):
+    highlight_not_correct = ""
+    link_not_correct = ""
+    highlight_correct = ""
+    link_correct = ""
+    for result in fact_check_results:
+        sentence = result['sentence']
+        status = result['status']
+        details = result.get('details', {})
+
+        if details:
+            referenced_segment = details.referenced_segment
+            evidence_urls = details.evidence_urls
+
+            if status:  # If it is true
+                if highlight_correct != "":
+                    highlight_correct += ","
+                highlight_correct += f"''{referenced_segment}''"
+
+                if link_correct != "":
+                    link_correct += ","
+                link_correct += f"''{evidence_urls[0]}''"
+                # link_correct += ", ".join([f"''{url}''" for url in evidence_urls])
+
+            else:  # If it is wrong
+                if highlight_not_correct != "":
+                    highlight_not_correct += ","
+                highlight_not_correct += f"''{referenced_segment}''"
+
+                if link_not_correct != "":
+                    link_not_correct += ","
+                link_not_correct += f"''{evidence_urls[0]}''"
+                # link_not_correct += ", ".join([f" '''{url}'''" for url in evidence_urls])
+    
+    highlight_not_correct += "."
+    link_not_correct += "."
+    highlight_correct += "."
+    link_correct += "."
+
+    return highlight_not_correct, link_not_correct, highlight_correct, link_correct
+
 @app.post("/getResponse")
 async def get_response(request: ResponseRequest):
     text = request.text
@@ -174,10 +243,28 @@ async def get_response(request: ResponseRequest):
         {"_id": ObjectId(conversationsessionsID)},
         {"$push": {"History": f"User: {text}"}}
     )
+
+    print(f"Response: {response}")
+    ref_files = []
+    splitted_sentences = split_into_sentences(response)
+    filtered_sentences = filter_sentences(splitted_sentences)
+    fact_check_results = fact_check_pipeline(filtered_sentences, ref_files, response, topK, conversationsessionsID)
+
+    old_message = new_message = response
+    highlight_not_correct, link_not_correct, highlight_correct, link_correct = filter_the_output(fact_check_results)
     db.conversationsessions.update_one(
-        {"_id": ObjectId(conversationsessionsID)},
-        {"$push": {"History": f"System: {response}"}}
-    )
+    {"_id": ObjectId(conversationsessionsID)},
+    {
+        "$push": {
+            "History": f"""System: OldMessage:{old_message}
+HighlightNotCorrect: {highlight_not_correct}
+LinkNotCorrect: {link_not_correct}
+HighlightCorrect: {highlight_correct}
+LinkCorrect: {link_correct}
+NewMessage: {new_message}"""
+        }
+    }
+)
     ref = relevant_files.get("links", []) 
     html_links = " ".join(
         f'<a href="{article.link}" target="_blank">{article.title}</a><br>'
