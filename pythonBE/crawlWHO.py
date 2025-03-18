@@ -69,10 +69,10 @@ def crawl_WHO_form_url(url: str, title: str):
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
-    time.sleep(5)
+    time.sleep(random.uniform(1, 3))
 
     all_elements = driver.find_elements(By.XPATH, ".//p | .//img | .//li | .//h2 | .//a")
-    time.sleep(3)
+    time.sleep(random.uniform(1, 3))
     for element in all_elements:
       if element.tag_name == "a":
           text_content = element.text.strip()
@@ -139,7 +139,7 @@ def crawl_WHO(urls: List[str], crawl_json: List[dict]):
     report_list = driver.find_elements(By.CLASS_NAME, "sf-meeting-report-list__item")
     if report_list:
       report_urls = []
-      for item in report_list[:5]:
+      for item in report_list[:MINIMUM_K]:
         report_url = item.get_attribute("href")
         report_urls.append(report_url)
       driver.quit()
@@ -173,19 +173,22 @@ def crawl_others(sentence: str, who_urls: List[str], crawl_json: List[dict], top
         "paragraphs": []
     }
 
-    driver = webdriver.Chrome(options=chrome_options)
-    print(other_link)
-    driver.get(other_link.link)
-    time.sleep(random.uniform(1, 3))
-    all_elements = driver.find_elements(By.XPATH, ".//p")
+    try:
+      driver = webdriver.Chrome(options=chrome_options)
+      print(other_link)
+      driver.get(other_link.link)
+      time.sleep(random.uniform(1, 3))
+      all_elements = driver.find_elements(By.XPATH, ".//p")
 
-    for element in all_elements:
-      if element.tag_name == "p":
-          text_content = element.get_attribute("innerText").strip()
-          if text_content:
-              other_crawl['paragraphs'].append({"content": text_content})
+      for element in all_elements:
+        if element.tag_name == "p":
+            text_content = element.get_attribute("innerText").strip()
+            if text_content:
+                other_crawl['paragraphs'].append({"content": text_content})
 
-    print(f'Crawl Information of Other Sites:\n{other_crawl}')
+      print(f'Crawl Information of Other Sites:\n{other_crawl}')
 
-    crawl_json.append(other_crawl)
-    driver.quit()
+      crawl_json.append(other_crawl)
+      driver.quit()
+    except:
+      print(f"Unable to crawl website: {other_link.link}")

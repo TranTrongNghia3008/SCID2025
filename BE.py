@@ -132,11 +132,17 @@ async def get_relevant_links(text: str, topK: int, conversationsessionsID: str):
     
     return {"query": query, "links": links, "file paths": file_paths, "locations": locations}
 
-def filter_the_output(fact_check_results):
+def filter_the_output(fact_check_results, old_message):
     highlight_not_correct = ""
     link_not_correct = ""
     highlight_correct = ""
     link_correct = ""
+
+    true_sentences = [item["details"].referenced_segment for item in fact_check_results if item["status"]]
+    false_sentences = [item["details"].referenced_segment for item in fact_check_results if not item["status"]]
+    revise_sentences = [item["details"].revised_sentence for item in fact_check_results if not item["status"]]
+    new_message = correct_answer(old_message, true_sentences, false_sentences, revise_sentences)
+
     for result in fact_check_results:
         sentence = result['sentence']
         status = result['status']
@@ -170,11 +176,6 @@ def filter_the_output(fact_check_results):
     link_not_correct += "."
     highlight_correct += "."
     link_correct += "."
-
-    true_sentences = [item["details"].referenced_segment for item in fact_check_results if item["status"]]
-    false_sentences = [item["details"].referenced_segment for item in fact_check_results if not item["status"]]
-    revise_sentences = [item["details"].revised_sentence for item in fact_check_results if not item["status"]]
-    new_message = correct_answer(result, true_sentences, false_sentences, revise_sentences)
 
     return highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message
 
@@ -257,7 +258,7 @@ async def get_response(request: ResponseRequest):
     fact_check_results = fact_check_pipeline(filtered_sentences, ref_files, response, topK, conversationsessionsID)
 
     old_message = response
-    highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message = filter_the_output(fact_check_results)
+    highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message = filter_the_output(fact_check_results, old_message)
     db.conversationsessions.update_one(
     {"_id": ObjectId(conversationsessionsID)},
     {

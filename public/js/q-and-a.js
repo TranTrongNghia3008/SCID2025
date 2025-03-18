@@ -14,7 +14,7 @@ const links = [
 const link_articles = []
 const files_path = []
 var linkSpecific = ""
-var topK = 2
+var topK = 3
 var isCrawl = true
 var locations = []
 
