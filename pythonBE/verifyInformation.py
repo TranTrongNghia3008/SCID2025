@@ -54,7 +54,7 @@ def sentence_mapping_pipeline(filtered_sentence: str, original_answer: str, fact
             evidence_urls=[]
         )
 
-def fact_check_pipeline(filtered_sentences: List[str], crawl_json: List[dict], original_answer: str, topK: int, conversationsessionsID: str, evidence_text="", maximum_characters=1000000):
+def fact_check_pipeline(filtered_sentences: List[str], crawl_json: List[dict], original_answer: str, conversationsessionsID: str, evidence_text="", maximum_characters=1000000):
     final_results = []
 
     for sentence in filtered_sentences:
@@ -63,7 +63,7 @@ def fact_check_pipeline(filtered_sentences: List[str], crawl_json: List[dict], o
             print(f"Can't find related articles for:\n{sentence}")
 
         crawl_WHO(who_urls, crawl_json)
-        crawl_others(sentence, who_urls, crawl_json, topK, conversationsessionsID)
+        crawl_others(sentence, who_urls, crawl_json, conversationsessionsID)
 
         # article_texts = " ".join([article["paragraphs"][0]["content"] for article in crawl_json if article["paragraphs"]])
         article_texts = "\n".join(para["content"] for item in crawl_json for para in item["paragraphs"] if "content" in para)

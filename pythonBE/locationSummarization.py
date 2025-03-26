@@ -86,3 +86,26 @@ def merge_locations(link_articles):
             sentiment=loc_data['sentiment']
         ))
     return result
+
+def process_news(args):
+    news, file_path, conversationsessionsID = args
+
+    title = re.sub(r'[^a-zA-Z\s]', '', news.title)
+    title = title.replace(" ", "_")
+
+    vector_store = create_vector_store(f"{conversationsessionsID}-{title}")
+    update_vector_store(vector_store.id, [file_path])
+
+    assistant_1 = create_assistant(vector_store.id)
+    list_location = flow_extract_location(assistant_1.id)
+
+    news.local = list_location
+    return news
+
+def parallel_processing(link_articles, files_path, conversationsessionsID):
+    args_list = [(link_articles[i], files_path[i], conversationsessionsID) for i in range(len(link_articles))]
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = list(executor.map(process_news, args_list))
+    
+    return results

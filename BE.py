@@ -71,35 +71,22 @@ async def get_location_informations(request: LocationRequest):
     link_articles = request.link_articles
     files_path = request.files_path
     conversationsessionsID = request.conversationsessionsID
-    
-    for i in range(len(link_articles)):
-        news = link_articles[i]
-        file_path = files_path[i]
 
-        title = re.sub(r'[^a-zA-Z\s]', '', news.title)
-        title = title.replace(" ", "_")
-
-        vector_store_1 = create_vector_store(f"{conversationsessionsID}-{title}")
-        update_vector_store(vector_store_1.id, [file_path])
-
-        assistant_1 = create_assistant(vector_store_1.id)
-
-        list_location = flow_extract_location(assistant_1.id)
-        news.local = list_location
+    link_articles = parallel_processing(link_articles, files_path, conversationsessionsID)
 
     merged_locations = merge_locations(link_articles)
 
     for loc in merged_locations:
         loc_data = {
             "SessionID": ObjectId(conversationsessionsID),
-            "administrative_area": loc.administrative_area,  # Directly access attributes
+            "administrative_area": loc.administrative_area,
             "country": loc.country,
             "continent": loc.continent,
             "lat": loc.lat,
             "lon": loc.lon,
-            "links": loc.links,  # Access the links attribute directly
-            "summaries": loc.summaries,  # Access summaries directly
-            "sentiment": loc.sentiment,  # Access sentiment directly
+            "links": loc.links,
+            "summaries": loc.summaries,
+            "sentiment": loc.sentiment,
             "__v": 0,
             "createdAt": datetime.utcnow(),
             "updatedAt": datetime.utcnow(),
@@ -107,9 +94,7 @@ async def get_location_informations(request: LocationRequest):
 
         db.locations.insert_one(loc_data)
     
-    locations = merged_locations
-    
-    return locations
+    return merged_locations
 
 @app.get("/getRelevantLinks")
 async def get_relevant_links(text: str, topK: int, conversationsessionsID: str):
@@ -131,53 +116,6 @@ async def get_relevant_links(text: str, topK: int, conversationsessionsID: str):
     locations = await get_location_informations(location_request)
     
     return {"query": query, "links": links, "file paths": file_paths, "locations": locations}
-
-def filter_the_output(fact_check_results, old_message):
-    highlight_not_correct = ""
-    link_not_correct = ""
-    highlight_correct = ""
-    link_correct = ""
-
-    true_sentences = [item["details"].referenced_segment for item in fact_check_results if item["status"]]
-    false_sentences = [item["details"].referenced_segment for item in fact_check_results if not item["status"]]
-    revise_sentences = [item["details"].revised_sentence for item in fact_check_results if not item["status"]]
-    new_message = correct_answer(old_message, true_sentences, false_sentences, revise_sentences)
-
-    for result in fact_check_results:
-        sentence = result['sentence']
-        status = result['status']
-        details = result.get('details', {})
-
-        if details:
-            referenced_segment = details.referenced_segment
-            evidence_urls = details.evidence_urls
-
-            if status:  # If it is true
-                if highlight_correct != "":
-                    highlight_correct += ","
-                highlight_correct += f"''{referenced_segment}''"
-
-                if link_correct != "":
-                    link_correct += ","
-                link_correct += f"''{evidence_urls[0]}''"
-                # link_correct += ", ".join([f"''{url}''" for url in evidence_urls])
-
-            else:  # If it is wrong
-                if highlight_not_correct != "":
-                    highlight_not_correct += ","
-                highlight_not_correct += f"''{referenced_segment}''"
-
-                if link_not_correct != "":
-                    link_not_correct += ","
-                link_not_correct += f"''{evidence_urls[0]}''"
-                # link_not_correct += ", ".join([f" '''{url}'''" for url in evidence_urls])
-    
-    highlight_not_correct += "."
-    link_not_correct += "."
-    highlight_correct += "."
-    link_correct += "."
-
-    return highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message
 
 @app.post("/getResponse")
 async def get_response(request: ResponseRequest):
@@ -231,10 +169,8 @@ async def get_response(request: ResponseRequest):
 
     # qa_history = None if not session.get("History") else "\n".join(session.get("History"))
 
-    # Lọc bỏ các mục có chứa 'Ref: '
     filtered_history = [item for item in history if not item.startswith("Ref: ")]
 
-    # Tạo qa_history từ các mục đã lọc
     qa_history = None if not filtered_history else "\n".join(filtered_history)
     
     prompt = (
@@ -255,7 +191,7 @@ async def get_response(request: ResponseRequest):
     ref_files = []
     splitted_sentences = split_into_sentences(response)
     filtered_sentences = filter_sentences(splitted_sentences)
-    fact_check_results = fact_check_pipeline(filtered_sentences, ref_files, response, topK, conversationsessionsID)
+    fact_check_results = fact_check_pipeline(filtered_sentences, ref_files, response, conversationsessionsID)
 
     old_message = response
     highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message = filter_the_output(fact_check_results, old_message)

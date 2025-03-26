@@ -32,3 +32,54 @@ def correct_answer(original_answer, correct_info, incorrect_info, revised_info):
   )
 
   return completion.choices[0].message.content
+
+def filter_the_output(fact_check_results, old_message):
+  highlight_not_correct = ""
+  link_not_correct = ""
+  highlight_correct = ""
+  link_correct = ""
+
+  true_sentences = [item["details"].referenced_segment for item in fact_check_results if item["status"]]
+  false_sentences = [item["details"].referenced_segment for item in fact_check_results if not item["status"]]
+  revise_sentences = [item["details"].revised_sentence for item in fact_check_results if not item["status"]]
+  new_message = correct_answer(old_message, true_sentences, false_sentences, revise_sentences)
+
+  for result in fact_check_results:
+      sentence = result['sentence']
+      status = result['status']
+      details = result.get('details', {})
+
+      if details:
+          referenced_segment = details.referenced_segment
+          evidence_urls = details.evidence_urls
+
+          if not evidence_urls:
+              print("Empty evidence urls:", details)
+              continue
+
+          if status:  # If it is true
+              if highlight_correct != "":
+                  highlight_correct += ","
+              highlight_correct += f"''{referenced_segment}''"
+
+              if link_correct != "":
+                  link_correct += ","
+              link_correct += f"''{evidence_urls[0]}''"
+              # link_correct += ", ".join([f"''{url}''" for url in evidence_urls])
+
+          else:  # If it is wrong
+              if highlight_not_correct != "":
+                  highlight_not_correct += ","
+              highlight_not_correct += f"''{referenced_segment}''"
+
+              if link_not_correct != "":
+                  link_not_correct += ","
+              link_not_correct += f"''{evidence_urls[0]}''"
+              # link_not_correct += ", ".join([f" '''{url}'''" for url in evidence_urls])
+  
+  highlight_not_correct += "."
+  link_not_correct += "."
+  highlight_correct += "."
+  link_correct += "."
+
+  return highlight_not_correct, link_not_correct, highlight_correct, link_correct, new_message

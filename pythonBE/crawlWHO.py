@@ -7,7 +7,7 @@ def search_who(caption: str):
   prompt = f'https://www.who.int/home/search-results?indexCatalogue=genericsearchindex1&searchQuery={caption}&wordsMode=AnyWord'
   # print(prompt)
   driver.get(prompt)
-  time.sleep(random.uniform(1, 3))
+  time.sleep(random.uniform(3, 3))
 
   articles = driver.find_elements(By.CLASS_NAME, 'sf-list-vertical__item')
 
@@ -69,10 +69,10 @@ def crawl_WHO_form_url(url: str, title: str):
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
-    time.sleep(random.uniform(1, 3))
+    time.sleep(random.uniform(3, 3))
 
     all_elements = driver.find_elements(By.XPATH, ".//p | .//img | .//li | .//h2 | .//a")
-    time.sleep(random.uniform(1, 3))
+    time.sleep(random.uniform(3, 3))
     for element in all_elements:
       if element.tag_name == "a":
           text_content = element.text.strip()
@@ -107,88 +107,183 @@ def crawl_WHO_form_url(url: str, title: str):
     driver.quit()
     return crawl
 
-def crawl_WHO(urls: List[str], crawl_json: List[dict]):
-  for url in urls:
+def process_url(url: dict):
     crawl = {
         "src": url['link'],
         "paragraphs": []
     }
+
     if '.pdf' in url['link'].lower():
-      crawl["paragraphs"] = [{"content": pdf_to_text(url['link'])}]
-      print(f'Crawl Information of WHO:\n{crawl}')
-      crawl_json.append(crawl)
-      continue
+        crawl["paragraphs"] = [{"content": pdf_to_text(url['link'])}]
+        print(f'Crawl Information of WHO:\n{crawl}')
+        return crawl
+
     driver = webdriver.Chrome(options=chrome_options)
-    driver.get(url['link'])
-    time.sleep(random.uniform(1, 3))
+    try:
+        driver.get(url['link'])
+        time.sleep(random.uniform(3, 5))
 
-    report_list = driver.find_elements(By.CLASS_NAME, "card--list.matching-height--item")
-    if report_list:
-      report_urls = []
-      for item in report_list[:MINIMUM_K]:
-        report_url = item.find_element(By.XPATH, ".//a").get_attribute("href")
-        report_urls.append(report_url)
-      driver.quit()
+        report_list = driver.find_elements(By.CLASS_NAME, "card--list.matching-height--item")
+        if report_list:
+            report_urls = [item.find_element(By.XPATH, ".//a").get_attribute("href") for item in report_list[:MINIMUM_K]]
+            driver.quit()
 
-      for report_url in report_urls:
-        crawl = crawl_WHO_form_url(report_url, "")
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as inner_executor:
+                crawled_reports = list(inner_executor.map(crawl_WHO_form_url, report_urls, [""] * len(report_urls)))
+
+            print(f'Crawl Information of WHO:\n{crawled_reports}')
+            return crawled_reports
+
+        report_list = driver.find_elements(By.CLASS_NAME, "sf-meeting-report-list__item")
+        if report_list:
+            report_urls = [item.get_attribute("href") for item in report_list[:MINIMUM_K]]
+            driver.quit()
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as inner_executor:
+                crawled_reports = list(inner_executor.map(crawl_WHO_form_url, report_urls, [""] * len(report_urls)))
+
+            print(f'Crawl Information of WHO:\n{crawled_reports}')
+            return crawled_reports
+
+        crawl = crawl_WHO_form_url(url['link'], url['title'])
         print(f'Crawl Information of WHO:\n{crawl}')
-        crawl_json.append(crawl)
-      continue
+        return crawl
 
-    report_list = driver.find_elements(By.CLASS_NAME, "sf-meeting-report-list__item")
-    if report_list:
-      report_urls = []
-      for item in report_list[:MINIMUM_K]:
-        report_url = item.get_attribute("href")
-        report_urls.append(report_url)
-      driver.quit()
+    finally:
+        driver.quit()
 
-      for report_url in report_urls:
-        crawl = crawl_WHO_form_url(report_url, "")
-        print(f'Crawl Information of WHO:\n{crawl}')
-        crawl_json.append(crawl)
-      continue
+def crawl_WHO(urls: List[dict], crawl_json: List[dict]):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        results = list(executor.map(process_url, urls))
 
-    crawl = crawl_WHO_form_url(url['link'], url['title'])
+    for result in results:
+        if isinstance(result, list):
+            crawl_json.extend(result)
+        else:
+            crawl_json.append(result)
 
-    print(f'Crawl Information of WHO:\n{crawl}')
+# def crawl_WHO(urls: List[str], crawl_json: List[dict]):
+#   for url in urls:
+#     crawl = {
+#         "src": url['link'],
+#         "paragraphs": []
+#     }
+#     if '.pdf' in url['link'].lower():
+#       crawl["paragraphs"] = [{"content": pdf_to_text(url['link'])}]
+#       print(f'Crawl Information of WHO:\n{crawl}')
+#       crawl_json.append(crawl)
+#       continue
+#     driver = webdriver.Chrome(options=chrome_options)
+#     driver.get(url['link'])
+#     time.sleep(random.uniform(3, 3))
 
-    crawl_json.append(crawl)
-    driver.quit()
+#     report_list = driver.find_elements(By.CLASS_NAME, "card--list.matching-height--item")
+#     if report_list:
+#       report_urls = []
+#       for item in report_list[:MINIMUM_K]:
+#         report_url = item.find_element(By.XPATH, ".//a").get_attribute("href")
+#         report_urls.append(report_url)
+#       driver.quit()
 
-def crawl_others(sentence: str, who_urls: List[str], crawl_json: List[dict], topK: int, conversationsessionsID: str):
-  query = analyze_prompt(sentence)
-  # print(query)
-  url_others = search_relevant_links(query, topK, conversationsessionsID)
-  count = 1
-  for other_link in url_others:
-    if count > MINIMUM_K:
-      break
-    # if other_link == '' or other_link in who_urls:
-    #   continue
-    count += 1
+#       for report_url in report_urls:
+#         crawl = crawl_WHO_form_url(report_url, "")
+#         print(f'Crawl Information of WHO:\n{crawl}')
+#         crawl_json.append(crawl)
+#       continue
+
+#     report_list = driver.find_elements(By.CLASS_NAME, "sf-meeting-report-list__item")
+#     if report_list:
+#       report_urls = []
+#       for item in report_list[:MINIMUM_K]:
+#         report_url = item.get_attribute("href")
+#         report_urls.append(report_url)
+#       driver.quit()
+
+#       for report_url in report_urls:
+#         crawl = crawl_WHO_form_url(report_url, "")
+#         print(f'Crawl Information of WHO:\n{crawl}')
+#         crawl_json.append(crawl)
+#       continue
+
+#     crawl = crawl_WHO_form_url(url['link'], url['title'])
+
+#     print(f'Crawl Information of WHO:\n{crawl}')
+
+#     crawl_json.append(crawl)
+#     driver.quit()
+
+def process_other_link(other_link: LinkArticle):
     other_crawl = {
-        "src": other_link,
+        "src": other_link.link,
         "paragraphs": []
     }
 
+    driver = webdriver.Chrome(options=chrome_options)
     try:
-      driver = webdriver.Chrome(options=chrome_options)
-      print(other_link)
-      driver.get(other_link.link)
-      time.sleep(random.uniform(1, 3))
-      all_elements = driver.find_elements(By.XPATH, ".//p")
+        driver.get(other_link.link)
+        time.sleep(random.uniform(3, 5))
+        all_elements = driver.find_elements(By.XPATH, ".//p")
 
-      for element in all_elements:
-        if element.tag_name == "p":
-            text_content = element.get_attribute("innerText").strip()
-            if text_content:
-                other_crawl['paragraphs'].append({"content": text_content})
+        for element in all_elements:
+            if element.tag_name == "p":
+                text_content = element.get_attribute("innerText").strip()
+                if text_content:
+                    other_crawl['paragraphs'].append({"content": text_content})
 
-      print(f'Crawl Information of Other Sites:\n{other_crawl}')
+        print(f'Crawl Information of Other Sites:\n{other_crawl}')
+        return other_crawl
 
-      crawl_json.append(other_crawl)
-      driver.quit()
-    except:
-      print(f"Unable to crawl website: {other_link.link}")
+    finally:
+        driver.quit()
+
+def crawl_others(sentence: str, who_urls: List[str], crawl_json: List[dict], conversationsessionsID: str):
+    query = analyze_prompt(sentence)
+    print(query)
+    url_others = search_relevant_links(query, MINIMUM_K, conversationsessionsID)
+
+    who_links_set = {item['link'] for item in who_urls}
+
+    url_others = [item for item in url_others if item.link not in who_links_set]
+
+    url_others = url_others[:MINIMUM_K]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(executor.map(process_other_link, url_others))
+
+    crawl_json.extend(results)
+
+# def crawl_others(sentence: str, who_urls: List[str], crawl_json: List[dict], topK: int, conversationsessionsID: str):
+  # query = analyze_prompt(sentence)
+  # # print(query)
+  # url_others = search_relevant_links(query, topK, conversationsessionsID)
+  # count = 1
+  # for other_link in url_others:
+  #   if count > MINIMUM_K:
+  #     break
+  #   # if other_link == '' or other_link in who_urls:
+  #   #   continue
+  #   count += 1
+  #   other_crawl = {
+  #       "src": other_link,
+  #       "paragraphs": []
+  #   }
+
+  #   try:
+  #     driver = webdriver.Chrome(options=chrome_options)
+  #     print(other_link)
+  #     driver.get(other_link.link)
+  #     time.sleep(random.uniform(3, 3))
+  #     all_elements = driver.find_elements(By.XPATH, ".//p")
+
+  #     for element in all_elements:
+  #       if element.tag_name == "p":
+  #           text_content = element.get_attribute("innerText").strip()
+  #           if text_content:
+  #               other_crawl['paragraphs'].append({"content": text_content})
+
+  #     print(f'Crawl Information of Other Sites:\n{other_crawl}')
+
+  #     crawl_json.append(other_crawl)
+  #     driver.quit()
+  #   except:
+  #     print(f"Unable to crawl website: {other_link.link}")

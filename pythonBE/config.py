@@ -46,6 +46,7 @@ from sentence_transformers import SentenceTransformer, util
 import pdfplumber
 from contextlib import nullcontext
 from PyPDF2 import PdfReader
+import concurrent.futures
 
 client = OpenAI(
     api_key = "YOUR_API_KEY",
@@ -108,7 +109,6 @@ class LocationRequest(BaseModel):
     link_articles: List[LinkArticle]
     files_path: List[str]
     conversationsessionsID: str
-    
 
 class ResponseRequest(BaseModel):
     text: str
