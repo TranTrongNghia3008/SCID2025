@@ -62,6 +62,59 @@ Please refer to this [Colab link](https://colab.research.google.com/drive/1cTo0M
 >
 </center>
 
+# Compare to other chat-bots
+We compare this with responses from two popular medical chat-bots: ChatGPT and Claude
+
+**User Query:** "Antibodies in infants born to mothers with COVID-
+19 pneumonia"
+
+## ChatGPT (OpenAI) 
+Mostly accurate immunological explanation, but includes speculative and unsupported generalizations.
+
+<center>
+<img
+    src="chatbot's  answer 2 final-1.png"
+>
+</center>
+
+### Response:
+    
+> "Several studies have shown that infants born to mothers with COVID-19... had detectable levels of anti-SARS-CoV-2 IgG antibodies at birth." **[Uncited generalization]**
+
+> "If infection occurs several weeks before delivery..." **[Speculative timing effect not demonstrated]**
+
+> "False positives [for IgM] can occur." **[No source or evidence provided]**
+
+> "Most studies report that neonatal SARS-CoV-2 infection is uncommon..." **[Overgeneralization not supported by current paper]**
+
+### Assessment:
+ Accurate in describing known mechanisms like IgG/IgM transfer, but the answer extrapolates beyond the data in the source paper, citing trends and results that are not backed by the specific study or documented with references.
+
+## Claude (Anthropic)
+Comprehensive but contains speculative or unsupported claims without citation.
+
+<center>
+<img
+    src="chatbot answer 1 final-1.png"
+>
+</center>
+
+### Response:
+> "Most pregnant women who develop COVID-19 pneumonia
+produce detectable anti-SARS-CoV-2 antibodies" **[Unsup-
+ported generalization]**
+
+> "These antibodies are frequently detected in cord blood of their newborns" **[Cord blood not measured]**
+
+> "The concentration of antibodies in newborns often corre-
+lates with maternal antibody levels" **[No correlation analysis]**
+
+> "In some cases, infants can have higher concentrations of
+these antibodies than their mothers" **[No supporting data]**
+
+### Assessment: 
+While the explanation of IgG transfer is accurate and aligns with existing immunological knowledge, key claims about antibody prevalence, cord blood, and comparative levels between mother and infant are not supported by the cited study and therefore risk being hallucinated or misleading without further evidence.
+
 # Evaluation
 
 The chatbot has been tested using the COVID-Fact dataset, comparing its performance against baseline models. Results indicate a 79.5% accuracy in filtering out misinformation.
