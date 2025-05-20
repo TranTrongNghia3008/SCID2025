@@ -6,12 +6,12 @@ Enhancing Medical Chatbot Reliability: A Multi-Step Verification Approach to Pre
 
 # Authors
 
-| No. | Author                         | Email                         |
-| --- | ------------------------------ | ----------------------------- |
-| 1   | Trong-Nghia Tran<sup>\*</sup>  | 21120507@student.hcmus.edu.vn |
-| 2   | Minh-Nhat Nguyen<sup>\*</sup>  | 21120107@student.hcmus.edu.vn |
-| 3   | Trong-Le Do                    | dtle@selab.hcmus.edu.vn       |
-| 4   | Minh-Triet Tran<sup>\*\*</sup> | tmtriet@fit.hcmus.edu.vn      |
+| No. | Author                        | Email                         |
+| --- | ----------------------------- | ----------------------------- |
+| 1   | Trong-Nghia Tran<sup>\*</sup> | 21120507@student.hcmus.edu.vn |
+| 2   | Minh-Nhat Nguyen<sup>\*</sup> | 21120107@student.hcmus.edu.vn |
+| 3   | Minh-Triet Tran               | tmtriet@fit.hcmus.edu.vn      |
+| 4   | Trong-Le Do<sup>\*\*</sup>    | dtle@selab.hcmus.edu.vn       |
 
 _<sup>_</sup>_ Both authors contribute equally.
 _<sup>\*_</sup>_ Corresponding author
