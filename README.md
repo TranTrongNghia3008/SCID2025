@@ -45,7 +45,7 @@ This project introduces a **multi-step verification framework** to enhance chatb
 
 # Testing pipeline
 
-Please refer to this [Colab link](https://colab.research.google.com/drive/1cTo0MSzdxN8lEtw3LtMIdgcPN2vrfsMz?usp=sharing) to run a test of the system's pipeline.
+Please refer to this [Colab link](https://colab.research.google.com/drive/1OAZnnOEv-c1TwcFCyPINHuO2BYvnb6-Q?usp=sharing) to run a test of the system's pipeline.
 
 ## Example Query & Response
 
@@ -74,7 +74,7 @@ We compare this with responses from two popular medical chat-bots: ChatGPT and C
 **User Query:** "Antibodies in infants born to mothers with COVID-
 19 pneumonia"
 
-## ChatGPT (OpenAI)
+## [ChatGPT (OpenAI)](https://chatgpt.com/share/68241eb3-9bfc-800f-b6b9-ebaa62448358)
 
 Mostly accurate immunological explanation, but includes speculative and unsupported generalizations.
 
@@ -98,7 +98,7 @@ Mostly accurate immunological explanation, but includes speculative and unsuppor
 
 Accurate in describing known mechanisms like IgG/IgM transfer, but the answer extrapolates beyond the data in the source paper, citing trends and results that are not backed by the specific study or documented with references.
 
-## Claude (Anthropic)
+## [Claude (Anthropic)](https://claude.ai/share/b4f09180-c82f-45d5-8bc2-7c97b123b737)
 
 Comprehensive but contains speculative or unsupported claims without citation.
 
