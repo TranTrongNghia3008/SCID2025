@@ -4,7 +4,12 @@ def analyze_prompt(text: str):
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Extract the information. If site exists, return the domain name of the site. Otherwise return empty."},
+            {"role": "system", "content": (
+                "You are an information extractor. Your job is to extract the site (if any) from the input text."
+                " Only return a site if the input text explicitly includes a domain (like 'example.com', 'nytimes.com', etc.)."
+                " If there is no site in the text, return an empty string for site."
+            )},
+            # {"role": "system", "content": "Extract the information. If site exists, return the domain name of the site. Otherwise return empty."},
             {"role": "user", "content": text},
         ],
         response_format=SearchQuery,
@@ -17,10 +22,16 @@ def analyze_prompt(text: str):
 def search_relevant_links(query: SearchQuery, topK: int, conversationsessionsID: str):
     driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
     
-    search_url = f'https://www.bing.com/search?q=site:{query.site} {query.query}'
+    site = query.site.strip().lower() if query.site else ''
+    if site and site not in ['n/a', 'none']:
+        search_url = f'https://www.bing.com/search?q=site:{site} {query.query}'
+    else:
+        search_url = f'https://www.bing.com/search?q={query.query}'
     print(search_url)
     driver.get(search_url)
-    time.sleep(random.uniform(1, 3))
+
+    # print(driver.page_source)
+    time.sleep(5)
 
     articles = driver.find_elements(By.CSS_SELECTOR, "#b_results li.b_algo")
     link_articles = []

@@ -40,7 +40,11 @@ def flow_qa(prompt, assistant_id):
     with client.beta.threads.runs.stream(
         thread_id=thread.id,
         assistant_id=assistant_id,
-        instructions="Please address the user as Jane Doe. The user has a premium account.",
+        instructions=(
+            "You are a healthcare support assistant. Your role is to provide accurate, reliable, and well-sourced information "
+            "based on the documents provided. Always verify facts before responding. If the information is not present in the documents "
+            "or is inconclusive, clearly state that and recommend consulting a qualified healthcare professional."
+        ),
         event_handler=handler,
     ) as stream:
         stream.until_done()
