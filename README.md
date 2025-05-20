@@ -1,27 +1,29 @@
-
 # SCID 2025
 
 # Title
+
 Enhancing Medical Chatbot Reliability: A Multi-Step Verification Approach to Prevent Hallucinations
 
 # Authors
-| No. | Author                        | Email |
-|-----|-------------------------------|-------|
-| 1   | Trong-Nghia Tran<sup>*</sup> | 21120507@student.hcmus.edu.vn |
-| 2   | Minh-Nhat Nguyen<sup>*</sup>           | 21120107@student.hcmus.edu.vn |
-| 3   | Trong-Le Do  | dtle@selab.hcmus.edu.vn |
-| 4   | Minh-Triet Tran<sup>**</sup>  | tmtriet@fit.hcmus.edu.vn |
 
-*<sup>*</sup>*  Both authors contribute equally.
-*<sup>**</sup>*  Corresponding author
+| No. | Author                         | Email                         |
+| --- | ------------------------------ | ----------------------------- |
+| 1   | Trong-Nghia Tran<sup>\*</sup>  | 21120507@student.hcmus.edu.vn |
+| 2   | Minh-Nhat Nguyen<sup>\*</sup>  | 21120107@student.hcmus.edu.vn |
+| 3   | Trong-Le Do                    | dtle@selab.hcmus.edu.vn       |
+| 4   | Minh-Triet Tran<sup>\*\*</sup> | tmtriet@fit.hcmus.edu.vn      |
 
+_<sup>_</sup>_ Both authors contribute equally.
+_<sup>\*_</sup>_ Corresponding author
 
 ## Introduction
+
 Medical chatbots powered by large language models (LLMs) have shown significant potential in providing healthcare-related information. However, ensuring the reliability of chatbot-generated responses is crucial to preventing misinformation and hallucinated outputs.
 
 This project introduces a **multi-step verification framework** to enhance chatbot reliability by integrating fact-checking mechanisms. The system is designed to retrieve medical information dynamically, verify accuracy using authoritative sources like WHO, and refine responses to ensure credibility.
 
 # Workflow
+
 <center>
   <img
     src="pipeline.png"
@@ -30,6 +32,7 @@ This project introduces a **multi-step verification framework** to enhance chatb
 </center>
 
 # Features
+
 - **Real-time Information Retrieval**: Uses Selenium and Bing Search to fetch the latest medical articles.
 - **Fact-Checking Mechanism**: Verifies chatbot responses by cross-referencing with WHO data and Medical-NER models.
 - **Multi-Step Verification**:
@@ -48,10 +51,12 @@ Please refer to this [Colab link](https://colab.research.google.com/drive/1cTo0M
 
 **User Query:** "Effective treatments for cancer on MedlinePlus"
 
-**AI-generated Answer:** 
+**AI-generated Answer:**
+
 > "...treating melanoma at early stages to prevent progression to more advanced, incurable stages. Current approaches are **focused on optimizing drug combinations** to enhance efficacy while minimizing toxicity..."
 
-**Refined Response:** 
+**Refined Response:**
+
 > "...treating melanoma at early stages to prevent progression to more advanced stages. **For Stage 0 melanoma (melanoma in situ), the primary treatment is surgical excision, where the melanoma and a small margin of normal skin are removed**..."
 
 **Sources:** [Treatment of Melanoma Skin Cancer, by Stage](https://www.cancer.org/cancer/types/melanoma-skin-cancer/treating/by-stage.html)
@@ -63,22 +68,24 @@ Please refer to this [Colab link](https://colab.research.google.com/drive/1cTo0M
 </center>
 
 # Compare to other chat-bots
+
 We compare this with responses from two popular medical chat-bots: ChatGPT and Claude
 
 **User Query:** "Antibodies in infants born to mothers with COVID-
 19 pneumonia"
 
-## ChatGPT (OpenAI) 
+## ChatGPT (OpenAI)
+
 Mostly accurate immunological explanation, but includes speculative and unsupported generalizations.
 
 <center>
 <img
-    src="chatbot's  answer 2 final-1.png"
+    src="chatbot's  answer 2.pdf"
 >
 </center>
 
 ### Response:
-    
+
 > "Several studies have shown that infants born to mothers with COVID-19... had detectable levels of anti-SARS-CoV-2 IgG antibodies at birth." **[Uncited generalization]**
 
 > "If infection occurs several weeks before delivery..." **[Speculative timing effect not demonstrated]**
@@ -88,31 +95,35 @@ Mostly accurate immunological explanation, but includes speculative and unsuppor
 > "Most studies report that neonatal SARS-CoV-2 infection is uncommon..." **[Overgeneralization not supported by current paper]**
 
 ### Assessment:
- Accurate in describing known mechanisms like IgG/IgM transfer, but the answer extrapolates beyond the data in the source paper, citing trends and results that are not backed by the specific study or documented with references.
+
+Accurate in describing known mechanisms like IgG/IgM transfer, but the answer extrapolates beyond the data in the source paper, citing trends and results that are not backed by the specific study or documented with references.
 
 ## Claude (Anthropic)
+
 Comprehensive but contains speculative or unsupported claims without citation.
 
 <center>
 <img
-    src="chatbot answer 1 final-1.png"
+    src="chatbot's  answer 1.pdf"
 >
 </center>
 
 ### Response:
+
 > "Most pregnant women who develop COVID-19 pneumonia
-produce detectable anti-SARS-CoV-2 antibodies" **[Unsup-
-ported generalization]**
+> produce detectable anti-SARS-CoV-2 antibodies" **[Unsup-
+> ported generalization]**
 
 > "These antibodies are frequently detected in cord blood of their newborns" **[Cord blood not measured]**
 
 > "The concentration of antibodies in newborns often corre-
-lates with maternal antibody levels" **[No correlation analysis]**
+> lates with maternal antibody levels" **[No correlation analysis]**
 
 > "In some cases, infants can have higher concentrations of
-these antibodies than their mothers" **[No supporting data]**
+> these antibodies than their mothers" **[No supporting data]**
 
-### Assessment: 
+### Assessment:
+
 While the explanation of IgG transfer is accurate and aligns with existing immunological knowledge, key claims about antibody prevalence, cord blood, and comparative levels between mother and infant are not supported by the cited study and therefore risk being hallucinated or misleading without further evidence.
 
 # Evaluation
@@ -122,6 +133,7 @@ The chatbot has been tested using the COVID-Fact dataset, comparing its performa
 # Citation
 
 If you use this work in your research, please cite:
+
 ```
 @inproceedings{Tran2025SCID,
   author = {Trong-Nghia Tran, Minh-Nhat Nguyen, Trong-Le Do, Minh-Triet Tran},
