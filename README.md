@@ -79,9 +79,8 @@ We compare this with responses from two popular medical chat-bots: ChatGPT and C
 Mostly accurate immunological explanation, but includes speculative and unsupported generalizations.
 
 <center>
-<img
-    src="chatbot's  answer 2.pdf"
->
+<iframe src="chatbot's  answer 2.pdf" width="100%" height="600px">
+</iframe>
 </center>
 
 ### Response:
@@ -112,7 +111,7 @@ Comprehensive but contains speculative or unsupported claims without citation.
 
 > "Most pregnant women who develop COVID-19 pneumonia
 > produce detectable anti-SARS-CoV-2 antibodies" **[Unsup-
-> ported generalization]**
+> > ported generalization]**
 
 > "These antibodies are frequently detected in cord blood of their newborns" **[Cord blood not measured]**
 
